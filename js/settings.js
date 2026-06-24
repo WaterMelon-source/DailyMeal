@@ -1,46 +1,110 @@
 export class Settings {
-  constructor(state) {
+  constructor(state, app) {
     this.state = state;
-    this.modal = document.getElementById('settingsModal');
+    this.app = app;
+    this.modal = document.getElementById("settingsModal");
     this.bindEvents();
   }
 
   bindEvents() {
-    document.getElementById('settingsBtn').addEventListener('click', () => this.open());
-    document.getElementById('modalClose').addEventListener('click', () => this.close());
-    this.modal.addEventListener('click', (e) => {
+    // Открытие/закрытие модалки
+    document
+      .getElementById("settingsBtn")
+      .addEventListener("click", () => this.open());
+    document
+      .getElementById("modalClose")
+      .addEventListener("click", () => this.close());
+    this.modal.addEventListener("click", (e) => {
       if (e.target === this.modal) this.close();
     });
 
-    document.getElementById('exportBtn').addEventListener('click', () => {
-      this.state.exportToFile();
+    // === МЕНЮ ===
+    document.getElementById("importMenuBtn").addEventListener("click", () => {
+      document.getElementById("importMenuFileInput").click();
     });
 
-    document.getElementById('importBtn').addEventListener('click', () => {
-      document.getElementById('importFileInput').click();
+    document.getElementById("emptyImportBtn").addEventListener("click", () => {
+      document.getElementById("importMenuFileInput").click();
     });
 
-    document.getElementById('importFileInput').addEventListener('change', async (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
+    document
+      .getElementById("importMenuFileInput")
+      .addEventListener("change", async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        // Подтверждение, если меню уже загружено
+        if (this.state.hasMenu()) {
+          if (!confirm("Текущее меню будет заменено. Продолжить?")) {
+            e.target.value = "";
+            return;
+          }
+        }
+
+        try {
+          await this.state.importMenuFromFile(file);
+          this.close();
+          this.app.onMenuImported();
+        } catch (err) {
+          alert("Ошибка импорта меню: " + err.message);
+        }
+        e.target.value = "";
+      });
+
+    document.getElementById("exportMenuBtn").addEventListener("click", () => {
       try {
-        await this.state.importFromFile(file);
-        alert('Прогресс успешно загружен!');
-        window.location.reload();
+        this.state.exportMenuToFile();
       } catch (err) {
-        alert('Ошибка импорта: ' + err.message);
+        alert("Ошибка экспорта: " + err.message);
       }
-      e.target.value = '';
     });
 
-    document.getElementById('clearBtn').addEventListener('click', () => {
-      if (confirm('Удалить весь прогресс? Это действие нельзя отменить.')) {
+    // === ПРОГРЕСС ===
+    document
+      .getElementById("exportProgressBtn")
+      .addEventListener("click", () => {
+        this.state.exportProgressToFile();
+      });
+
+    document
+      .getElementById("importProgressBtn")
+      .addEventListener("click", () => {
+        document.getElementById("importProgressFileInput").click();
+      });
+
+    document
+      .getElementById("importProgressFileInput")
+      .addEventListener("change", async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        try {
+          await this.state.importProgressFromFile(file);
+          alert("Прогресс успешно загружен!");
+          window.location.reload();
+        } catch (err) {
+          alert("Ошибка импорта прогресса: " + err.message);
+        }
+        e.target.value = "";
+      });
+
+    // === УДАЛИТЬ ВСЁ ===
+    document.getElementById("clearAllBtn").addEventListener("click", () => {
+      if (
+        confirm(
+          "Удалить ВСЁ: и меню, и прогресс (галочки)? Это действие нельзя отменить.",
+        )
+      ) {
         this.state.clearAll();
-        window.location.reload();
+        this.close();
+        this.app.onAllCleared();
       }
     });
   }
 
-  open() { this.modal.classList.add('open'); }
-  close() { this.modal.classList.remove('open'); }
+  open() {
+    this.modal.classList.add("open");
+  }
+  close() {
+    this.modal.classList.remove("open");
+  }
 }

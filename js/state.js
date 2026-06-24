@@ -1,18 +1,23 @@
 export class State {
   constructor() {
-    this.storagePrefix = 'chefmenu';
+    this.storagePrefix = "chefmenu";
+    this.menuKey = `${this.storagePrefix}_menu`;
   }
 
-  getKey(dayId, mealId) {
+  // === ПРОГРЕСС (ГАЛОЧКИ) ===
+  getProgressKey(dayId, mealId) {
     return `${this.storagePrefix}_${dayId}_${mealId}`;
   }
 
   isEaten(dayId, mealId) {
-    return localStorage.getItem(this.getKey(dayId, mealId)) === 'true';
+    return localStorage.getItem(this.getProgressKey(dayId, mealId)) === "true";
   }
 
   setEaten(dayId, mealId, value) {
-    localStorage.setItem(this.getKey(dayId, mealId), value ? 'true' : 'false');
+    localStorage.setItem(
+      this.getProgressKey(dayId, mealId),
+      value ? "true" : "false",
+    );
   }
 
   toggleEaten(dayId, mealId) {
@@ -25,7 +30,11 @@ export class State {
     const result = {};
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i);
-      if (key.startsWith(this.storagePrefix + '_')) {
+      if (
+        key &&
+        key.startsWith(this.storagePrefix + "_") &&
+        key !== this.menuKey
+      ) {
         result[key] = localStorage.getItem(key);
       }
     }
@@ -33,42 +42,26 @@ export class State {
   }
 
   importProgress(data) {
-    if (!data || typeof data !== 'object') throw new Error('Invalid data');
+    if (!data || typeof data !== "object")
+      throw new Error("Invalid progress data");
     Object.entries(data).forEach(([key, value]) => {
-      if (key.startsWith(this.storagePrefix + '_')) {
+      if (key.startsWith(this.storagePrefix + "_") && key !== this.menuKey) {
         localStorage.setItem(key, value);
       }
     });
   }
 
-  clearAll() {
-    const keys = [];
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (key.startsWith(this.storagePrefix + '_')) keys.push(key);
-    }
-    keys.forEach(k => localStorage.removeItem(k));
-  }
-
-  exportToFile() {
+  exportProgressToFile() {
     const payload = {
-      version: '1.0.0',
+      type: "progress",
+      version: "2.0.0",
       exportedAt: new Date().toISOString(),
-      progress: this.getAllProgress()
+      progress: this.getAllProgress(),
     };
-    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    const date = new Date().toISOString().slice(0, 10);
-    a.download = `chef-menu-backup-${date}.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    this.downloadJson(payload, `chef-menu-progress-${this.dateStamp()}.json`);
   }
 
-  importFromFile(file) {
+  importProgressFromFile(file) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = (e) => {
@@ -78,14 +71,93 @@ export class State {
             this.importProgress(data.progress);
             resolve();
           } else {
-            reject(new Error('Неверный формат файла'));
+            reject(new Error("Неверный формат файла прогресса"));
           }
         } catch (err) {
-          reject(err);
+          reject(new Error("Ошибка чтения файла: " + err.message));
         }
       };
-      reader.onerror = () => reject(new Error('Ошибка чтения файла'));
+      reader.onerror = () => reject(new Error("Ошибка чтения файла"));
       reader.readAsText(file);
     });
+  }
+
+  // === МЕНЮ ===
+  getMenu() {
+    const raw = localStorage.getItem(this.menuKey);
+    if (!raw) return null;
+    try {
+      return JSON.parse(raw);
+    } catch {
+      return null;
+    }
+  }
+
+  setMenu(menu) {
+    if (!menu || !menu.days) throw new Error("Неверная структура меню");
+    localStorage.setItem(this.menuKey, JSON.stringify(menu));
+  }
+
+  clearMenu() {
+    localStorage.removeItem(this.menuKey);
+  }
+
+  hasMenu() {
+    return this.getMenu() !== null;
+  }
+
+  exportMenuToFile() {
+    const menu = this.getMenu();
+    if (!menu) throw new Error("Меню не загружено");
+    this.downloadJson(menu, `chef-menu-${this.dateStamp()}.json`);
+  }
+
+  importMenuFromFile(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const menu = JSON.parse(e.target.result);
+          if (!menu.days || !Array.isArray(menu.days)) {
+            reject(new Error("Неверная структура меню: отсутствует поле days"));
+            return;
+          }
+          this.setMenu(menu);
+          resolve(menu);
+        } catch (err) {
+          reject(new Error("Ошибка чтения файла: " + err.message));
+        }
+      };
+      reader.onerror = () => reject(new Error("Ошибка чтения файла"));
+      reader.readAsText(file);
+    });
+  }
+
+  // === ОБЩЕЕ ===
+  clearAll() {
+    const keys = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && key.startsWith(this.storagePrefix + "_")) keys.push(key);
+    }
+    keys.forEach((k) => localStorage.removeItem(k));
+  }
+
+  downloadJson(data, filename) {
+    const blob = new Blob([JSON.stringify(data, null, 2)], {
+      type: "application/json",
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  dateStamp() {
+    return new Date().toISOString().slice(0, 10);
   }
 }
