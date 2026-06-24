@@ -2,8 +2,6 @@ import { State } from './state.js';
 import { Render } from './render.js';
 import { Settings } from './settings.js';
 
-const DAYS_OF_WEEK = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'];
-
 class App {
   constructor() {
     this.state = new State();
@@ -19,7 +17,6 @@ class App {
     this.renderDaysNav();
     this.renderMeals();
     this.startCurrentMealTimer();
-    this.registerServiceWorker();
   }
 
   getTodayIndex() {
@@ -97,16 +94,6 @@ class App {
 
   startCurrentMealTimer() {
     setInterval(() => this.highlightCurrentMeal(), 60000);
-  }
-
-  async registerServiceWorker() {
-    if ('serviceWorker' in navigator) {
-      try {
-        await navigator.serviceWorker.register('./sw.js');
-      } catch (e) {
-        console.log('SW registration failed:', e);
-      }
-    }
   }
 }
 
