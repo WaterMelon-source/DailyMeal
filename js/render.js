@@ -1,7 +1,11 @@
 export class Render {
+  constructor(app) {
+    this.app = app;
+  }
+
   isTimeExpired(timeStr) {
     const now = new Date();
-    const [h, m] = timeStr.split(':').map(Number);
+    const [h, m] = timeStr.split(":").map(Number);
     const mealTime = new Date();
     mealTime.setHours(h, m, 0, 0);
     return now > mealTime;
@@ -11,25 +15,26 @@ export class Render {
     const eaten = state.isEaten(dayId, meal.id);
     const expired = this.isTimeExpired(meal.time);
 
-    const card = document.createElement('div');
-    card.className = `meal-card ${expired ? 'expired' : ''} ${eaten ? 'eaten' : ''}`;
+    const card = document.createElement("div");
+    card.className = `meal-card ${expired ? "expired" : ""} ${eaten ? "eaten" : ""}`;
     card.id = `card_${meal.id}`;
 
     const kcalText = `${meal.kcal} ккал · Б:${meal.protein} · Ж:${meal.fat} · У:${meal.carbs}`;
 
+    const imageHtml = meal.image
+      ? `<img class="meal-image" src="${meal.image}" alt="${meal.name}" loading="lazy">`
+      : `<div class="meal-image" style="background: linear-gradient(135deg, #2A2A2A, #1A1A1A);"></div>`;
+
     card.innerHTML = `
-      <div class="meal-header">
-        <div class="meal-info-left">
-          <div class="arrow-icon">
-            <svg width="12" height="8" viewBox="0 0 12 8" fill="none" stroke="${expired ? '#8C8A85' : '#1A1A1A'}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M1 1L6 6L11 1"/>
-            </svg>
-          </div>
-          <span class="meal-time">${meal.time}</span>
-          <div class="meal-text">
-            <span class="meal-name">${meal.name}</span>
-            <span class="meal-kcal">${kcalText}</span>
-          </div>
+      ${imageHtml}
+      <div class="meal-info-bar">
+        <button class="meal-expand-btn" aria-label="Открыть рецепт">
+          <img src="icons/expand.svg" alt="">
+        </button>
+        <span class="meal-time">${meal.time}</span>
+        <div class="meal-text">
+          <div class="meal-name">${meal.name}</div>
+          <div class="meal-kcal">${kcalText}</div>
         </div>
         <div class="checkbox-wrapper">
           <div class="custom-checkbox">
@@ -37,37 +42,65 @@ export class Render {
           </div>
         </div>
       </div>
-      <div class="recipe-content" id="recipe_${meal.id}">
-        <div class="recipe-inner">
-          <h4>Пошаговый рецепт:</h4>
-          <ol class="steps-list">
-            ${meal.steps.map(s => `<li>${s}</li>`).join('')}
-          </ol>
-        </div>
-      </div>
     `;
 
-    const header = card.querySelector('.meal-header');
-    header.addEventListener('click', () => this.toggleRecipe(card, meal.id));
+    const expandBtn = card.querySelector(".meal-expand-btn");
+    expandBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      this.app.openRecipe(meal);
+    });
 
-    const checkbox = card.querySelector('.checkbox-wrapper');
-    checkbox.addEventListener('click', (e) => {
+    const checkbox = card.querySelector(".checkbox-wrapper");
+    checkbox.addEventListener("click", (e) => {
       e.stopPropagation();
       const nowEaten = state.toggleEaten(dayId, meal.id);
-      card.classList.toggle('eaten', nowEaten);
+      card.classList.toggle("eaten", nowEaten);
     });
 
     return card;
   }
 
-  toggleRecipe(card, mealId) {
-    const content = document.getElementById(`recipe_${mealId}`);
-    if (card.classList.contains('expanded')) {
-      card.classList.remove('expanded');
-      content.style.maxHeight = '0px';
-    } else {
-      card.classList.add('expanded');
-      content.style.maxHeight = content.scrollHeight + 'px';
-    }
+  showRecipeModal(meal) {
+    const modal = document.getElementById("recipeModal");
+    const body = document.getElementById("recipeModalBody");
+
+    const kcalText = `${meal.kcal} ккал · Б:${meal.protein} · Ж:${meal.fat} · У:${meal.carbs}`;
+
+    const heroImage = meal.image
+      ? `<img class="recipe-hero-image" src="${meal.image}" alt="${meal.name}">`
+      : "";
+
+    const stepsHtml = meal.steps
+      .map((step, index) => {
+        const stepText = typeof step === "string" ? step : step.text;
+        const stepImage =
+          typeof step === "object" && step.image ? step.image : null;
+        const imageHtml = stepImage
+          ? `<img class="recipe-step-image" src="${stepImage}" alt="Шаг ${index + 1}" loading="lazy">`
+          : "";
+        return `
+        <li class="recipe-step">
+          <div class="recipe-step-text">${stepText}</div>
+          ${imageHtml}
+        </li>
+      `;
+      })
+      .join("");
+
+    body.innerHTML = `
+      ${heroImage}
+      <h2 class="recipe-title">${meal.name}</h2>
+      <p class="recipe-meta">${kcalText}</p>
+      <ol class="recipe-steps">${stepsHtml}</ol>
+    `;
+
+    modal.classList.add("open");
+    document.body.style.overflow = "hidden";
+  }
+
+  hideRecipeModal() {
+    const modal = document.getElementById("recipeModal");
+    modal.classList.remove("open");
+    document.body.style.overflow = "";
   }
 }

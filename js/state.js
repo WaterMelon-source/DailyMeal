@@ -2,9 +2,27 @@ export class State {
   constructor() {
     this.storagePrefix = "chefmenu";
     this.menuKey = `${this.storagePrefix}_menu`;
+    this.themeKey = `${this.storagePrefix}_theme`;
   }
 
-  // === ПРОГРЕСС (ГАЛОЧКИ) ===
+  // === ТЕМА ===
+  getTheme() {
+    return localStorage.getItem(this.themeKey) || "dark";
+  }
+
+  setTheme(theme) {
+    localStorage.setItem(this.themeKey, theme);
+    document.body.setAttribute("data-theme", theme);
+  }
+
+  toggleTheme() {
+    const current = this.getTheme();
+    const next = current === "dark" ? "light" : "dark";
+    this.setTheme(next);
+    return next;
+  }
+
+  // === ПРОГРЕСС ===
   getProgressKey(dayId, mealId) {
     return `${this.storagePrefix}_${dayId}_${mealId}`;
   }
@@ -33,7 +51,8 @@ export class State {
       if (
         key &&
         key.startsWith(this.storagePrefix + "_") &&
-        key !== this.menuKey
+        key !== this.menuKey &&
+        key !== this.themeKey
       ) {
         result[key] = localStorage.getItem(key);
       }
@@ -45,7 +64,11 @@ export class State {
     if (!data || typeof data !== "object")
       throw new Error("Invalid progress data");
     Object.entries(data).forEach(([key, value]) => {
-      if (key.startsWith(this.storagePrefix + "_") && key !== this.menuKey) {
+      if (
+        key.startsWith(this.storagePrefix + "_") &&
+        key !== this.menuKey &&
+        key !== this.themeKey
+      ) {
         localStorage.setItem(key, value);
       }
     });
@@ -96,10 +119,6 @@ export class State {
   setMenu(menu) {
     if (!menu || !menu.days) throw new Error("Неверная структура меню");
     localStorage.setItem(this.menuKey, JSON.stringify(menu));
-  }
-
-  clearMenu() {
-    localStorage.removeItem(this.menuKey);
   }
 
   hasMenu() {

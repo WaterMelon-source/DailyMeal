@@ -1,18 +1,17 @@
 {
-  "name": "Шеф-Меню 3000 ккал",
+  "name": "Шеф-Меню",
   "short_name": "Шеф-Меню",
-  "description": "Трекер питания для набора массы",
+  "description": "Трекер питания",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#FDFBF7",
-  "theme_color": "#FDFBF7",
+  "background_color": "#0A0A0A",
+  "theme_color": "#0A0A0A",
   "orientation": "portrait",
   "icons": [
     {
       "src": "icons/icon.svg",
       "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "any"
+      "type": "image/svg+xml"
     }
   ]
 }

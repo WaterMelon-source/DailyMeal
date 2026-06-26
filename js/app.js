@@ -5,39 +5,76 @@ import { Settings } from "./settings.js";
 class App {
   constructor() {
     this.state = new State();
-    this.render = new Render();
+    this.render = new Render(this);
     this.settings = new Settings(this.state, this);
     this.menu = null;
     this.currentDayIndex = 0;
     this.timerId = null;
+    this.currentTab = "menu";
     this.init();
   }
 
   async init() {
+    this.state.setTheme(this.state.getTheme());
+    this.updateThemeLabel();
+
     this.menu = this.state.getMenu();
     if (!this.menu) {
       this.showEmptyState();
     } else {
       this.showMenu();
     }
+
+    this.bindTabs();
+  }
+
+  bindTabs() {
+    document
+      .getElementById("tabMenu")
+      .addEventListener("click", () => this.switchTab("menu"));
+    document
+      .getElementById("tabSettings")
+      .addEventListener("click", () => this.switchTab("settings"));
+  }
+
+  switchTab(tab) {
+    this.currentTab = tab;
+    document
+      .querySelectorAll(".tab-btn")
+      .forEach((b) => b.classList.remove("active"));
+    document
+      .querySelector(`.tab-btn[data-tab="${tab}"]`)
+      .classList.add("active");
+
+    document
+      .querySelectorAll(".screen")
+      .forEach((s) => s.classList.remove("active"));
+
+    if (tab === "menu") {
+      if (this.menu) {
+        document.getElementById("menuScreen").classList.add("active");
+      } else {
+        document.getElementById("emptyState").style.display = "flex";
+      }
+    } else if (tab === "settings") {
+      document.getElementById("settingsScreen").classList.add("active");
+    }
   }
 
   showEmptyState() {
     document.getElementById("emptyState").style.display = "flex";
-    document.getElementById("mainContainer").style.display = "none";
-    document.getElementById("daysNav").style.display = "none";
-    document.getElementById("menuStatus").textContent = "Меню: не загружено";
+    document.getElementById("menuScreen").classList.remove("active");
+    document.getElementById("menuStatus").textContent = "• не загружено";
   }
 
   showMenu() {
     document.getElementById("emptyState").style.display = "none";
-    document.getElementById("mainContainer").style.display = "block";
-    document.getElementById("daysNav").style.display = "flex";
+    document.getElementById("menuScreen").classList.add("active");
 
     const daysCount = this.menu.days.length;
     const version = this.menu.schema_version || "?";
     document.getElementById("menuStatus").textContent =
-      `Меню: загружено (${daysCount} дней, v${version})`;
+      `• загружено (${daysCount} дней, v${version})`;
 
     this.currentDayIndex = this.getTodayIndex();
     this.renderDaysNav();
@@ -45,18 +82,30 @@ class App {
     this.startCurrentMealTimer();
   }
 
-  // Вызывается из Settings после импорта меню
   onMenuImported() {
     this.stopCurrentMealTimer();
     this.menu = this.state.getMenu();
     this.showMenu();
+    this.switchTab("menu");
   }
 
-  // Вызывается из Settings после удаления всего
   onAllCleared() {
     this.stopCurrentMealTimer();
     this.menu = null;
     this.showEmptyState();
+    this.switchTab("menu");
+  }
+
+  updateThemeLabel() {
+    const theme = this.state.getTheme();
+    const label = document.getElementById("themeLabel");
+    if (label) {
+      label.textContent = theme === "dark" ? "Светлая тема" : "Темная тема";
+    }
+  }
+
+  onThemeToggled() {
+    this.updateThemeLabel();
   }
 
   getTodayIndex() {
@@ -129,6 +178,13 @@ class App {
       const el = document.getElementById(`card_${currentMealId}`);
       if (el) el.classList.add("current");
     }
+  }
+
+  openRecipe(meal) {
+    this.render.showRecipeModal(meal);
+  }
+  closeRecipe() {
+    this.render.hideRecipeModal();
   }
 
   startCurrentMealTimer() {

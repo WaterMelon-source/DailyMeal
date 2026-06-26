@@ -2,23 +2,10 @@ export class Settings {
   constructor(state, app) {
     this.state = state;
     this.app = app;
-    this.modal = document.getElementById("settingsModal");
     this.bindEvents();
   }
 
   bindEvents() {
-    // Открытие/закрытие модалки
-    document
-      .getElementById("settingsBtn")
-      .addEventListener("click", () => this.open());
-    document
-      .getElementById("modalClose")
-      .addEventListener("click", () => this.close());
-    this.modal.addEventListener("click", (e) => {
-      if (e.target === this.modal) this.close();
-    });
-
-    // === МЕНЮ ===
     document.getElementById("importMenuBtn").addEventListener("click", () => {
       document.getElementById("importMenuFileInput").click();
     });
@@ -33,7 +20,6 @@ export class Settings {
         const file = e.target.files[0];
         if (!file) return;
 
-        // Подтверждение, если меню уже загружено
         if (this.state.hasMenu()) {
           if (!confirm("Текущее меню будет заменено. Продолжить?")) {
             e.target.value = "";
@@ -43,7 +29,6 @@ export class Settings {
 
         try {
           await this.state.importMenuFromFile(file);
-          this.close();
           this.app.onMenuImported();
         } catch (err) {
           alert("Ошибка импорта меню: " + err.message);
@@ -59,7 +44,6 @@ export class Settings {
       }
     });
 
-    // === ПРОГРЕСС ===
     document
       .getElementById("exportProgressBtn")
       .addEventListener("click", () => {
@@ -87,7 +71,11 @@ export class Settings {
         e.target.value = "";
       });
 
-    // === УДАЛИТЬ ВСЁ ===
+    document.getElementById("themeToggleBtn").addEventListener("click", () => {
+      this.state.toggleTheme();
+      this.app.onThemeToggled();
+    });
+
     document.getElementById("clearAllBtn").addEventListener("click", () => {
       if (
         confirm(
@@ -95,16 +83,20 @@ export class Settings {
         )
       ) {
         this.state.clearAll();
-        this.close();
         this.app.onAllCleared();
       }
     });
-  }
 
-  open() {
-    this.modal.classList.add("open");
-  }
-  close() {
-    this.modal.classList.remove("open");
+    document
+      .getElementById("recipeModalClose")
+      .addEventListener("click", () => {
+        this.app.closeRecipe();
+      });
+
+    document.getElementById("recipeModal").addEventListener("click", (e) => {
+      if (e.target === document.getElementById("recipeModal")) {
+        this.app.closeRecipe();
+      }
+    });
   }
 }
