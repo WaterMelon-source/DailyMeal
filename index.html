@@ -7,6 +7,7 @@
       content="width=device-width, initial-scale=1.0, viewport-fit=cover"
     />
     <title>Шеф-Меню</title>
+    <base href="/" />
     <link rel="manifest" href="manifest.json" />
     <meta name="theme-color" content="#0A0A0A" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -19,7 +20,6 @@
     <link rel="stylesheet" href="css/styles.css" />
   </head>
   <body data-theme="dark">
-    <!-- Экран меню -->
     <div id="menuScreen" class="screen active">
       <header>
         <div class="days-nav" id="daysNav"></div>
@@ -30,14 +30,12 @@
       </main>
     </div>
 
-    <!-- Экран настроек -->
     <div id="settingsScreen" class="screen">
       <div class="settings-bg">
         <img src="icons/leaf.svg" alt="" class="leaf-decoration" />
       </div>
       <div class="settings-content">
         <h1 class="settings-title">НАСТРОЙКИ</h1>
-
         <div class="settings-section">
           <h2 class="settings-section-title">
             МЕНЮ
@@ -53,7 +51,6 @@
           </button>
           <input type="file" id="importMenuFileInput" accept=".json" hidden />
         </div>
-
         <div class="settings-section">
           <h2 class="settings-section-title">ПРОГРЕСС</h2>
           <button class="settings-btn" id="exportProgressBtn">
@@ -71,7 +68,6 @@
             hidden
           />
         </div>
-
         <div class="settings-section">
           <h2 class="settings-section-title">ТЕМА</h2>
           <button class="settings-btn" id="themeToggleBtn">
@@ -79,7 +75,6 @@
             <span id="themeLabel">Светлая тема</span>
           </button>
         </div>
-
         <div class="settings-section">
           <h2 class="settings-section-title">ДАННЫЕ</h2>
           <button class="settings-btn danger" id="clearAllBtn">
@@ -87,12 +82,10 @@
             Удалить все
           </button>
         </div>
-
         <p class="settings-version">Информация: Версия 2.0.0</p>
       </div>
     </div>
 
-    <!-- Пустое состояние -->
     <div class="empty-state" id="emptyState" style="display: none">
       <div class="empty-icon">️</div>
       <h2>МЕНЮ НЕ ЗАГРУЖЕНО</h2>
@@ -109,7 +102,6 @@
       </button>
     </div>
 
-    <!-- Модальное окно рецепта -->
     <div class="recipe-modal" id="recipeModal">
       <div class="recipe-modal-content">
         <button class="recipe-modal-close" id="recipeModalClose">
@@ -119,7 +111,6 @@
       </div>
     </div>
 
-    <!-- Нижний таб-бар -->
     <nav class="tab-bar">
       <button class="tab-btn active" data-tab="menu" id="tabMenu">
         <img src="icons/clock.svg" alt="" width="24" height="24" />

@@ -1,99 +1,82 @@
 import { State } from "./state.js";
 import { Render } from "./render.js";
 import { Settings } from "./settings.js";
+import { Router } from "./router.js";
 
 class App {
   constructor() {
     this.state = new State();
     this.render = new Render(this);
     this.settings = new Settings(this.state, this);
+    this.router = new Router();
     this.menu = null;
     this.currentDayIndex = 0;
     this.timerId = null;
-    this.currentTab = "menu";
     this.init();
   }
 
   async init() {
     this.state.setTheme(this.state.getTheme());
     this.updateThemeLabel();
-
     this.menu = this.state.getMenu();
-    if (!this.menu) {
-      this.showEmptyState();
-    } else {
-      this.showMenu();
-    }
 
-    this.bindTabs();
+    this.router.define("/menu", () => this.activateTab("menu"));
+    this.router.define("/settings", () => this.activateTab("settings"));
+
+    this.bindTabsToRouter();
+    this.router.init();
   }
 
-  bindTabs() {
-    document
-      .getElementById("tabMenu")
-      .addEventListener("click", () => this.switchTab("menu"));
-    document
-      .getElementById("tabSettings")
-      .addEventListener("click", () => this.switchTab("settings"));
+  bindTabsToRouter() {
+    document.getElementById("tabMenu").addEventListener("click", (e) => {
+      e.preventDefault();
+      this.router.navigate("/menu");
+    });
+    document.getElementById("tabSettings").addEventListener("click", (e) => {
+      e.preventDefault();
+      this.router.navigate("/settings");
+    });
   }
 
-  switchTab(tab) {
-    this.currentTab = tab;
+  activateTab(tab) {
     document
       .querySelectorAll(".tab-btn")
-      .forEach((b) => b.classList.remove("active"));
-    document
-      .querySelector(`.tab-btn[data-tab="${tab}"]`)
-      .classList.add("active");
-
+      .forEach((b) => b.classList.toggle("active", b.dataset.tab === tab));
     document
       .querySelectorAll(".screen")
       .forEach((s) => s.classList.remove("active"));
+    document.getElementById("emptyState").style.display = "none";
 
-    if (tab === "menu") {
+    if (tab === "settings") {
+      document.getElementById("settingsScreen").classList.add("active");
+    } else if (tab === "menu") {
       if (this.menu) {
         document.getElementById("menuScreen").classList.add("active");
+        const daysCount = this.menu.days.length;
+        const version = this.menu.schema_version || "?";
+        document.getElementById("menuStatus").textContent =
+          `• загружено (${daysCount} дней, v${version})`;
+        this.currentDayIndex = this.getTodayIndex();
+        this.renderDaysNav();
+        this.renderMeals();
+        this.startCurrentMealTimer();
       } else {
         document.getElementById("emptyState").style.display = "flex";
+        document.getElementById("menuStatus").textContent = "• не загружено";
       }
-    } else if (tab === "settings") {
-      document.getElementById("settingsScreen").classList.add("active");
     }
-  }
-
-  showEmptyState() {
-    document.getElementById("emptyState").style.display = "flex";
-    document.getElementById("menuScreen").classList.remove("active");
-    document.getElementById("menuStatus").textContent = "• не загружено";
-  }
-
-  showMenu() {
-    document.getElementById("emptyState").style.display = "none";
-    document.getElementById("menuScreen").classList.add("active");
-
-    const daysCount = this.menu.days.length;
-    const version = this.menu.schema_version || "?";
-    document.getElementById("menuStatus").textContent =
-      `• загружено (${daysCount} дней, v${version})`;
-
-    this.currentDayIndex = this.getTodayIndex();
-    this.renderDaysNav();
-    this.renderMeals();
-    this.startCurrentMealTimer();
   }
 
   onMenuImported() {
     this.stopCurrentMealTimer();
     this.menu = this.state.getMenu();
-    this.showMenu();
-    this.switchTab("menu");
+    this.router.navigate("/menu");
   }
 
   onAllCleared() {
     this.stopCurrentMealTimer();
     this.menu = null;
-    this.showEmptyState();
-    this.switchTab("menu");
+    this.router.navigate("/menu");
   }
 
   updateThemeLabel() {
@@ -183,6 +166,7 @@ class App {
   openRecipe(meal) {
     this.render.showRecipeModal(meal);
   }
+
   closeRecipe() {
     this.render.hideRecipeModal();
   }
