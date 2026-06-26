@@ -1,37 +1,41 @@
-// js/router.js
 export class Router {
-  constructor() {
-    this.routes = {};
-    this.currentPath = null;
-    window.addEventListener("popstate", () => this.handleLocation());
-  }
-
-  define(path, callback) {
-    this.routes[path] = callback;
-  }
-
-  navigate(path) {
-    if (this.currentPath === path) return;
-    window.history.pushState({ path }, "", path);
-    this.handleLocation();
-  }
-
-  handleLocation() {
-    let path = window.location.pathname || "/";
-    const stored = sessionStorage.getItem("spa-path");
-
-    if (stored && path === "/") {
-      path = stored;
-      sessionStorage.removeItem("spa-path");
-      window.history.replaceState({}, "", path);
-    }
-
-    this.currentPath = path;
-    const handler = this.routes[path] || this.routes["/menu"];
-    if (handler) handler();
+  constructor(routes, defaultRoute) {
+    this.routes = routes;
+    this.defaultRoute = defaultRoute;
+    this.currentRoute = null;
   }
 
   init() {
-    this.handleLocation();
+    const path = this.getCurrentPath();
+    this.navigate(path, false);
+  }
+
+  getCurrentPath() {
+    return window.location.pathname;
+  }
+
+  navigate(path, updateHistory = true) {
+    // Нормализация пути
+    if (!path || path === "") path = "/";
+
+    // Проверка существования маршрута
+    const route = this.routes[path] || this.routes[this.defaultRoute];
+    if (!route) {
+      console.warn(`Route not found: ${path}`);
+      path = this.defaultRoute;
+    }
+
+    // Обновление URL через replaceState (без создания записей в истории)
+    if (updateHistory) {
+      window.history.replaceState({ path }, "", path);
+    }
+
+    // Вызов обработчика маршрута
+    this.currentRoute = path;
+    if (route) route();
+  }
+
+  isActive(path) {
+    return this.currentRoute === path;
   }
 }

@@ -8,74 +8,116 @@ class App {
     this.state = new State();
     this.render = new Render(this);
     this.settings = new Settings(this.state, this);
-    this.router = new Router();
     this.menu = null;
     this.currentDayIndex = 0;
     this.timerId = null;
+    this.menuInitialized = false;
+
+    // Инициализация роутера
+    this.router = new Router(
+      {
+        "/": () => this.showScreen("menu"),
+        "/menu": () => this.showScreen("menu"),
+        "/settings": () => this.showScreen("settings"),
+      },
+      "/menu",
+    );
+
     this.init();
   }
 
   async init() {
     this.state.setTheme(this.state.getTheme());
     this.updateThemeLabel();
+
+    // Загрузка меню
     this.menu = this.state.getMenu();
 
-    this.router.define("/menu", () => this.activateTab("menu"));
-    this.router.define("/settings", () => this.activateTab("settings"));
+    // Если меню есть, инициализируем его один раз
+    if (this.menu) {
+      this.initMenu();
+    }
 
-    this.bindTabsToRouter();
+    // Инициализация роутера (определение маршрута из URL и показ экрана)
     this.router.init();
+
+    this.bindTabs();
   }
 
-  bindTabsToRouter() {
-    document.getElementById("tabMenu").addEventListener("click", (e) => {
-      e.preventDefault();
-      this.router.navigate("/menu");
-    });
-    document.getElementById("tabSettings").addEventListener("click", (e) => {
-      e.preventDefault();
-      this.router.navigate("/settings");
-    });
+  initMenu() {
+    if (this.menuInitialized) return;
+
+    const daysCount = this.menu.days.length;
+    const version = this.menu.schema_version || "?";
+    document.getElementById("menuStatus").textContent =
+      `• загружено (${daysCount} дней, v${version})`;
+
+    this.currentDayIndex = this.getTodayIndex();
+    this.renderDaysNav();
+    this.renderMeals();
+    this.startCurrentMealTimer();
+
+    this.menuInitialized = true;
   }
 
-  activateTab(tab) {
+  bindTabs() {
+    document
+      .getElementById("tabMenu")
+      .addEventListener("click", () => this.router.navigate("/menu"));
+    document
+      .getElementById("tabSettings")
+      .addEventListener("click", () => this.router.navigate("/settings"));
+  }
+
+  showScreen(screen) {
+    // Обновление состояния табов
     document
       .querySelectorAll(".tab-btn")
-      .forEach((b) => b.classList.toggle("active", b.dataset.tab === tab));
+      .forEach((b) => b.classList.remove("active"));
+
+    const activeTab = screen === "settings" ? "settings" : "menu";
+    document
+      .querySelector(`.tab-btn[data-tab="${activeTab}"]`)
+      ?.classList.add("active");
+
+    // Скрытие всех экранов и empty state
     document
       .querySelectorAll(".screen")
       .forEach((s) => s.classList.remove("active"));
     document.getElementById("emptyState").style.display = "none";
 
-    if (tab === "settings") {
-      document.getElementById("settingsScreen").classList.add("active");
-    } else if (tab === "menu") {
+    if (screen === "menu") {
       if (this.menu) {
         document.getElementById("menuScreen").classList.add("active");
-        const daysCount = this.menu.days.length;
-        const version = this.menu.schema_version || "?";
-        document.getElementById("menuStatus").textContent =
-          `• загружено (${daysCount} дней, v${version})`;
-        this.currentDayIndex = this.getTodayIndex();
-        this.renderDaysNav();
-        this.renderMeals();
-        this.startCurrentMealTimer();
       } else {
         document.getElementById("emptyState").style.display = "flex";
         document.getElementById("menuStatus").textContent = "• не загружено";
       }
+    } else if (screen === "settings") {
+      document.getElementById("settingsScreen").classList.add("active");
     }
   }
 
   onMenuImported() {
     this.stopCurrentMealTimer();
     this.menu = this.state.getMenu();
+    this.menuInitialized = false;
+
+    // Инициализация нового меню
+    this.initMenu();
+
+    // Переключение на экран меню
+    this.showScreen("menu");
     this.router.navigate("/menu");
   }
 
   onAllCleared() {
     this.stopCurrentMealTimer();
     this.menu = null;
+    this.menuInitialized = false;
+
+    // Переключение на экран меню (покажется empty state)
+    this.showScreen("menu");
     this.router.navigate("/menu");
   }
 
