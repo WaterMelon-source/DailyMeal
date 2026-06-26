@@ -534,7 +534,8 @@ header {
   display: flex;
   justify-content: center;
   gap: 60px;
-  padding: 12px 0 calc(12px + env(safe-area-inset-bottom));
+  /*padding: 12px 0 calc(12px + env(safe-area-inset-bottom));*/
+  padding: 12px;
   z-index: 200;
 }
 
