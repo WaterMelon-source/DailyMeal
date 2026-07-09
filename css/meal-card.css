@@ -4,11 +4,11 @@
   gap: 24px;
   width: 100%;
   max-width: 800px;
-  max-height: 80vh;
+  max-height: 80dvh;
   overflow-y: auto;
-  padding-bottom: calc(80px + env(safe-area-inset-bottom));
   box-sizing: border-box;
-  padding-right: 8px;
+  padding: 0 8px calc(80px + env(safe-area-inset-bottom)) 0;
+  flex-shrink: 0;
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
