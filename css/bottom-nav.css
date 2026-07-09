@@ -44,3 +44,20 @@
   height: 24px;
   object-fit: contain;
 }
+
+@media (display-mode: standalone) {
+  .bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #896657;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    overflow: hidden;
+    height: 75px;
+    padding-bottom: 34px;
+    box-sizing: content-box;
+  }
+}

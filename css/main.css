@@ -9,14 +9,6 @@
   padding: 0;
 }
 
-html,
-body {
-  height: 100%;
-  margin: 0;
-  min-height: -webkit-fill-available;
-  height: -webkit-fill-available;
-}
-
 body {
   font-family:
     system-ui,
