@@ -1,0 +1,21 @@
+.training-title {
+  display: flex;
+  padding-top: 24px;
+  padding-bottom: 24px;
+  font-family: Arial, sans-serif;
+  color: #c39f93;
+  font-weight: bold;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.training-title::before {
+  content: "";
+  display: block; /* inline-block заменен на предсказуемый block */
+  width: 6px;
+  height: 28px;
+  background-color: #8fa88d;
+  border-radius: 3px;
+  margin-right: 16px;
+  flex-shrink: 0; /* Защищает палочку от сжатия на узких экранах */
+}

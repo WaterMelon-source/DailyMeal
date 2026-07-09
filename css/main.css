@@ -1,6 +1,8 @@
 /* Imports */
 @import "top-nav.css";
 @import "bottom-nav.css";
+@import "meal-card.css";
+@import "training-title.css";
 
 /* Core */
 * {
@@ -16,6 +18,14 @@ body {
     sans-serif;
   background: #fdebd9;
   padding: 20px;
+}
+
+.app-layout {
+  max-width: 600px;
+  margin: 0 auto;
+  padding-left: 16px; /* Одинаковый отступ слева для всех */
+  padding-right: 16px; /* Одинаковый отступ справа для всех */
+  box-sizing: border-box;
 }
 
 .no-select {

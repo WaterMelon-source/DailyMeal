@@ -12,6 +12,7 @@
   height: 75px;
   padding-bottom: env(safe-area-inset-bottom);
   box-sizing: content-box;
+  z-index: 2;
 }
 
 .buttons-menu {

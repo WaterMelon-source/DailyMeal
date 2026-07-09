@@ -1,10 +1,12 @@
 // Imports
 import { initCalendar } from "./top-nav.js";
 import { initTabs } from "./bottom-nav.js";
+import { renderMeals } from "./meals.js";
 
 // Inits
 initCalendar();
 initTabs();
+renderMeals();
 
 // Mouse Scroll
 const scrollContainer = document.querySelector(".top-nav");
