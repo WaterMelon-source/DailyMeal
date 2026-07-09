@@ -10,7 +10,6 @@
   align-items: center;
   overflow: hidden;
   height: 75px;
-  padding-bottom: env(safe-area-inset-bottom);
   box-sizing: content-box;
 }
 
