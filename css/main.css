@@ -16,6 +16,7 @@ body {
     sans-serif;
   background: #fdebd9;
   padding: 20px;
+  height: 100dvh;
 }
 
 .no-select {
