@@ -25,14 +25,17 @@
   width: 100%;
 }
 
-/* Блок со временем (слева) */
 .meal-time {
-  background-color: #90a88b; /* Глубокий приглушенный зеленый */
+  position: absolute;
+  top: -33px; /* Отрицательный отступ выталкивает плашку ровно наполовину вверх */
+  left: 24px; /* Отступ слева как на фото */
+  z-index: 2;
+  background-color: #90a88b;
   color: #ffffff;
   font-weight: 700;
   font-size: 16px;
-  padding: 9px 10px;
-  border-radius: 12px;
+  padding: 6px 14px; /* Скорректированы внутренние отступы для формы «таба» */
+  border-radius: 12px 12px 0 0;
   min-width: 60px;
   text-align: center;
 }
@@ -42,9 +45,20 @@
   flex-grow: 1;
   background-color: #bda79e; /* Цвет заглушки для фото */
   border-radius: 20px;
-  overflow: hidden;
   height: 220px;
   position: relative;
+  margin-top: 40px; /* Добавлено, чтобы выступающее время не перекрывало верхние элементы */
+}
+
+.meal-bg-image {
+  width: 100%;
+  height: 100%;
+  border-radius: 20px;
+  object-fit: cover; /* Растягивает фото без искажений */
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1; /* Картинка ложится под кнопку и инфо-плашку */
 }
 
 /* Зона для фоновой картинки блюда */
@@ -82,6 +96,7 @@
   bottom: 0;
   left: 0;
   right: 0;
+  border-radius: 0 0 20px 20px;
   background-color: #90a88b;
   color: #ffffff;
   padding: 10px 16px;
@@ -107,6 +122,7 @@
   justify-content: center;
   align-items: center;
   min-width: 50px;
+  margin-top: 40px; /* Добавлено для выравнивания по центру с карточкой */
 }
 
 /* Круглая кнопка-галочка */
@@ -121,6 +137,9 @@
   align-items: center;
   justify-content: center;
   padding: 0;
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease; /* плавный переход для кнопки */
 }
 
 /* Состояние, когда выполнено */
@@ -134,8 +153,10 @@
   height: 22px;
   fill: #ffffff;
   display: none;
+  opacity: 0;
+  transition: opacity 0.2s ease; /* плавный переход для иконки */
 }
-
 .status-btn.checked svg {
   display: block;
+  opacity: 1;
 }

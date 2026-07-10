@@ -5,32 +5,36 @@ const mealsData = [
     time: "08:00",
     title: "Завтрак: Овсяная каша с арахисовой пастой и яйцами",
     kbju: "680 ккал • Б:32 • Ж:25 • У:85",
-    image: "icons/expand.svg", // Здесь можно указать фоновое изображение для card-image, если нужно
-    isChecked: false, // Изначальный статус (не выполнено)
+    image:
+      "https://cdn.food.ru/unsigned/fit/2048/1536/ce/0/czM6Ly9tZWRpYS9waWN0dXJlcy8yMDI2MDMyNi90bTllRHQuanBlZw.webp",
+    isChecked: false,
   },
   {
     id: 2,
     time: "10:00",
     title: "Второй завтрак: Творог с ягодами и орехами",
     kbju: "420 ккал • Б:35 • Ж:12 • У:40",
-    image: "icons/expand.svg",
-    isChecked: true, // Изначальный статус (выполнено)
+    image:
+      "https://cdn.food.ru/unsigned/fit/2048/1536/ce/0/czM6Ly9tZWRpYS9waWN0dXJlcy8yMDIyMTExNi8zakZ1dHkuanBlZw.webp",
+    isChecked: true,
   },
   {
     id: 3,
     time: "12:00",
     title: "Второй завтрак: Творог с ягодами и орехами",
     kbju: "420 ккал • Б:35 • Ж:12 • У:40",
-    image: "icons/expand.svg",
-    isChecked: true, // Изначальный статус (выполнено)
+    image:
+      "https://cdn.food.ru/unsigned/fit/2048/1536/ce/0/czM6Ly9tZWRpYS9waWN0dXJlcy8yMDIyMTExNi8zakZ1dHkuanBlZw.webp",
+    isChecked: false,
   },
   {
     id: 4,
-    time: "12:00",
+    time: "14:00",
     title: "Второй завтрак: Творог с ягодами и орехами",
     kbju: "420 ккал • Б:35 • Ж:12 • У:40",
-    image: "icons/expand.svg",
-    isChecked: true, // Изначальный статус (выполнено)
+    image:
+      "https://cdn.food.ru/unsigned/fit/2048/1536/ce/0/czM6Ly9tZWRpYS9waWN0dXJlcy8yMDIyMTExNi8zakZ1dHkuanBlZw.webp",
+    isChecked: true,
   },
 ];
 
@@ -52,12 +56,14 @@ export function renderMeals() {
 
     // Наполняем внутренний HTML карточки
     mealRow.innerHTML = `
-      <div class="meal-time">${meal.time}</div>
-
       <div class="meal-card">
+        <div class="meal-time">${meal.time}</div>
         <div class="card-image">
+          <!-- Картинка рендерится только если meal.image задан -->
+          ${meal.image ? `<img src="${meal.image}" alt="${meal.title}" class="meal-bg-image" />` : ""}
+          
           <button class="expand-btn" aria-label="Развернуть" data-id="${meal.id}">
-            <img src="${meal.image}" alt="Expand" class="expand-icon" />
+            <img src="icons/expand.svg" alt="Expand" class="expand-icon" />
           </button>
         </div>
         <div class="card-info">

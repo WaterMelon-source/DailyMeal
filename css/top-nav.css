@@ -7,6 +7,9 @@
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
   padding-top: env(safe-area-inset-top, 0px);
+
+  /* ВКЛЮЧАЕМ МАГНИТ ДЛЯ КОНТЕЙНЕРА */
+  scroll-snap-type: x mandatory;
 }
 
 .top-nav::-webkit-scrollbar {
@@ -18,6 +21,7 @@
   list-style: none;
   gap: 12px;
   justify-content: space-between;
+  padding: 0 16px; /* Добавьте боковые отступы, чтобы первый/последний день не прижимались к краю */
 }
 
 /* Days */
@@ -31,6 +35,9 @@
   border-radius: 20px;
   color: #bf9989;
   transition: background 0.2s;
+
+  /* ВКЛЮЧАЕМ ТОЧКУ ПРИМАГНИЧИВАНИЯ ДЛЯ ДНЯ */
+  scroll-snap-align: center; /* Центрирует день на экране при остановке скролла */
 }
 
 .day-link.active {
