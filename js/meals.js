@@ -59,12 +59,7 @@ export function renderMeals() {
       <div class="meal-card">
         <div class="meal-time">${meal.time}</div>
         <div class="card-image">
-          <!-- Картинка рендерится только если meal.image задан -->
           ${meal.image ? `<img src="${meal.image}" alt="${meal.title}" class="meal-bg-image" />` : ""}
-          
-          <button class="expand-btn" aria-label="Развернуть" data-id="${meal.id}">
-            <img src="icons/expand.svg" alt="Expand" class="expand-icon" />
-          </button>
         </div>
         <div class="card-info">
           <h3 class="card-title">${meal.title}</h3>
@@ -89,15 +84,6 @@ export function renderMeals() {
       statusBtn.classList.toggle("checked");
       statusBtn.innerHTML = meal.isChecked ? checkSvg : "";
     });
-
-    // Навешиваем событие клика на кнопку развертывания (expand)
-    const expandBtn = mealRow.querySelector(".expand-btn");
-    expandBtn.addEventListener("click", () => {
-      console.log(`Разворачиваем карточку с ID: ${meal.id}`);
-      // Здесь вы можете прописать логику открытия модального окна или скрытого текста
-    });
-
-    // Добавляем готовую карточку в контейнер
     container.appendChild(mealRow);
   });
 }
