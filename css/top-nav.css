@@ -22,6 +22,11 @@
   padding: 0 24px;
 }
 
+.calendar-item {
+  flex-shrink: 0;
+  scroll-snap-align: start; /* Магнитим сам контейнер li */
+}
+
 /* Days */
 .day-link {
   display: flex;
@@ -34,7 +39,6 @@
   border-radius: 20px;
   color: #bf9989;
   transition: background 0.2s;
-  scroll-snap-align: center;
 }
 
 .day-link.active {

@@ -13,7 +13,7 @@ export function initCalendar() {
     const d = new Date(2026, 6, 1 + i);
     const iso = getLocalDateStr(d);
     return `
-      <li>
+      <li class="calendar-item">
         <a href="#date-${iso}" class="day-link ${iso === todayStr ? "active" : ""}">
           <span class="day-name no-select">${days[(d.getDay() + 6) % 7]}</span>
           <span class="day-number no-select">${d.getDate()}</span>

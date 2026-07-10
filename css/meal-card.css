@@ -68,28 +68,6 @@
   position: relative;
 }
 
-/* Кнопка "развернуть" в правом верхнем углу */
-.expand-btn {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  background-color: #90a88b;
-  border: none;
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 2;
-}
-
-.expand-icon {
-  width: 18px;
-  height: 18px;
-}
-
 /* Зеленая плашка с описанием внизу карточки */
 .card-info {
   position: absolute;
@@ -122,6 +100,7 @@
   justify-content: center;
   align-items: center;
   min-width: 50px;
+  margin-left: 20px;
   margin-top: 40px; /* Добавлено для выравнивания по центру с карточкой */
 }
 
