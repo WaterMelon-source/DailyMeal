@@ -1,0 +1,85 @@
+/* 1. Задний фон: темный полупрозрачный слой с размытием */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.4); /* Накладываем полупрозрачную тень */
+
+  /* Эффект матового стекла (Blur) */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px); /* Обязательно для iOS */
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+
+  /* Изначально скрываем окно */
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+/* Состояние, когда JS добавляет класс .open */
+.modal-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* 2. Контентное окошко (Карточка рецепта) */
+.modal-content {
+  background-color: #ffffff;
+  padding: 30px 24px 24px 24px;
+  border-radius: 28px;
+  width: 88%;
+  max-width: 440px;
+  position: relative;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+
+  /* Эффект плавного выезда снизу вверх при появлении */
+  transform: translateY(30px);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Анимация карточки при открытии */
+.modal-overlay.open .modal-content {
+  transform: translateY(0);
+}
+
+/* 4. Стили текста внутри рецепта */
+.modal-title {
+  color: #896657;
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin: 0 0 6px 0;
+  padding-right: 26px;
+}
+
+.modal-meta {
+  font-size: 1rem;
+  color: #bf9989;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.modal-recipe-text {
+  font-size: 1.2rem;
+  line-height: 1.6;
+  color: #4a4a4a;
+  max-height: 50dvh; /* Если рецепт огромный, внутри окошка появится скролл */
+  overflow-y: auto;
+}
+
+.recipe-line {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+}
+
+.grams {
+  font-weight: 600;
+  color: #666;
+  margin-left: 16px;
+}

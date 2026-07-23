@@ -1,18 +1,19 @@
 /* Nav */
 .bottom-nav {
   position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  bottom: 20px;
+  left: 32%;
+  right: 32%;
   background-color: #896657;
+  border-radius: 60px;
   display: flex;
   justify-content: space-around;
   align-items: center;
-  overflow: hidden;
-  height: 75px;
-  padding-bottom: env(safe-area-inset-bottom);
-  box-sizing: content-box;
+  height: 85px;
+  box-sizing: border-box;
   z-index: 2;
+  padding: 0 15px;
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
 .buttons-menu {

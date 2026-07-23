@@ -58,9 +58,9 @@ export function renderMeals() {
     mealRow.innerHTML = `
       <div class="meal-card">
         <div class="meal-time">${meal.time}</div>
-        <div class="card-image">
+        <button class="card-image-btn" data-id="${meal.id}">
           ${meal.image ? `<img src="${meal.image}" alt="${meal.title}" class="meal-bg-image" />` : ""}
-        </div>
+        </button>
         <div class="card-info">
           <h3 class="card-title">${meal.title}</h3>
           <p class="card-kbju">${meal.kbju}</p>

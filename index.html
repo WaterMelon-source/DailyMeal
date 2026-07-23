@@ -12,33 +12,108 @@
     <link rel="stylesheet" href="css/main.css" />
   </head>
   <body>
-    <div class="app-layout">
-      <nav class="top-nav">
-        <ul class="calendar-menu" id="calendarMenu"></ul>
-      </nav>
-      <h2 class="training-title">СИЛОВАЯ</h2>
-      <div class="meal-container" id="mealContainer">
-        <!-- Карточки будут созданы здесь автоматически через JS -->
+    <div id="auth-screen" class="screen active">
+      <div class="auth-box">
+        <h1 id="auth-title">Вход</h1>
+        <p id="auth-error" class="auth-error"></p>
+        <form id="auth-form">
+          <input type="email" id="auth-email" placeholder="Email" required />
+          <input
+            type="password"
+            id="auth-password"
+            placeholder="Пароль"
+            required
+          />
+          <button type="submit" id="auth-submit">Войти</button>
+        </form>
+        <p id="auth-toggle-text">
+          Нет аккаунта? <a href="#" id="auth-toggle-link">Зарегистрироваться</a>
+        </p>
       </div>
-      <nav class="bottom-nav">
-        <ul class="buttons-menu" id="buttonsMenu">
-          <li>
-            <a href="#" class="nav-tab active" data-target="timer">
-              <img src="icons/clock.svg" alt="Timer" class="tab-icon" />
-            </a>
-          </li>
-          <li>
-            <a href="#" class="nav-tab" data-target="analytics">
-              <img src="icons/stats.svg" alt="Analytics" class="tab-icon" />
-            </a>
-          </li>
-          <li>
-            <a href="#" class="nav-tab" data-target="settings">
-              <img src="icons/settings.svg" alt="Settings" class="tab-icon" />
-            </a>
-          </li>
-        </ul>
-      </nav>
+    </div>
+
+    <div id="onboarding-screen" class="screen">
+      <div class="onboarding-box">
+        <div class="onboarding-wrapper">
+          <div id="step-1" class="onboarding-step active">
+            <h2>Сколько вы весите?</h2>
+            <p class="subtitle">Это поможет вам следить за изменениями</p>
+            <div class="weight-display">
+              <span id="current-weight-val" class="weight-value">70</span>
+              <span class="weight-unit">кг</span>
+            </div>
+            <div class="picker" id="picker-current">
+              <div class="picker-highlight"></div>
+              <div class="picker-list"></div>
+            </div>
+            <p class="footer-text">Вы сможете изменить это позже</p>
+            <button type="button" id="btn-step-1" class="calc-btn">
+              ДАЛЕЕ
+            </button>
+          </div>
+
+          <div id="step-2" class="onboarding-step">
+            <h2>Какой вес вы хотите достичь?</h2>
+            <p class="subtitle">Укажите цель и начните путь</p>
+            <div class="weight-display">
+              <span id="target-weight-val" class="weight-value">65</span>
+              <span class="weight-unit">кг</span>
+            </div>
+            <div class="picker" id="picker-target">
+              <div class="picker-highlight"></div>
+              <div class="picker-list"></div>
+            </div>
+            <p class="footer-text">Вы сможете изменить это позже</p>
+            <button type="button" id="btn-step-2" class="calc-btn">
+              ЗАВЕРШИТЬ
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="main-app" class="screen">
+      <div class="app-layout">
+        <nav class="top-nav">
+          <ul class="calendar-menu" id="calendarMenu"></ul>
+        </nav>
+        <div class="tab-content active" id="timer">
+          <h2 class="training-title">СИЛОВАЯ</h2>
+          <div class="meal-container" id="mealContainer"></div>
+        </div>
+        <div class="tab-content" id="analytics">
+          <h2 class="training-title">АНАЛИТИКА</h2>
+        </div>
+        <div class="tab-content" id="settings">
+          <h2 class="training-title">НАСТРОЙКИ</h2>
+        </div>
+        <nav class="bottom-nav">
+          <ul class="buttons-menu" id="buttonsMenu">
+            <li>
+              <a href="#" class="nav-tab active" data-target="timer"
+                ><img src="icons/clock.svg" alt="Timer" class="tab-icon"
+              /></a>
+            </li>
+            <li>
+              <a href="#" class="nav-tab" data-target="analytics"
+                ><img src="icons/stats.svg" alt="Analytics" class="tab-icon"
+              /></a>
+            </li>
+            <li>
+              <a href="#" class="nav-tab" data-target="settings"
+                ><img src="icons/settings.svg" alt="Settings" class="tab-icon"
+              /></a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+    <div id="recipe-modal" class="modal-overlay">
+      <div class="modal-content">
+        <div id="modal-body">
+          <!-- Сюда JavaScript будет вставлять данные рецепта -->
+        </div>
+      </div>
     </div>
     <script src="js/app.js" type="module"></script>
   </body>
