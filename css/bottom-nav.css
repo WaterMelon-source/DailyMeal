@@ -2,24 +2,25 @@
 .bottom-nav {
   position: fixed;
   bottom: 20px;
-  left: 32%;
-  right: 32%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 250px;
   background-color: #896657;
   border-radius: 60px;
   display: flex;
-  justify-content: space-around;
+
+  justify-content: center;
   align-items: center;
   height: 85px;
   box-sizing: border-box;
   z-index: 2;
-  padding: 0 15px;
-  padding-bottom: env(safe-area-inset-bottom);
+  padding: 0;
 }
 
 .buttons-menu {
   display: flex;
   list-style: none;
-  gap: 60px;
+  gap: 30px;
   justify-content: space-between;
 }
 
